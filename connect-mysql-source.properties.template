@@ -17,7 +17,21 @@ name=mysql-source
 connector.class=org.wushujames.connect.mysql.MySqlSourceConnector
 tasks.max=1
 
-host=192.168.59.103
+host=127.0.0.1
 user=maxwell
-password=XXXXXX
+password=xxxxx
 port=3306
+
+# topic_prefix=maxwell
+
+# schema_database=not_maxwell
+
+# bootstrapper=none
+# replication_host=xx.xxx.xx
+# replication_port=XXXX
+# replication_user=XXXX
+# replication_password=XXXXXX
+
+# include_dbs=favorite_db
+# include_tables=important_tables
+
