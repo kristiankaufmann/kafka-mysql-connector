@@ -65,6 +65,7 @@ public class MySqlSourceTask extends SourceTask {
     private MaxwellConfig config;
     private MaxwellContext maxwellContext;
     private MaxwellReplicator replicator;
+    private String topic_prefix;
 
     
     @Override
@@ -75,6 +76,9 @@ public class MySqlSourceTask extends SourceTask {
                 if( MAXWELL_OPTIONS.contains(key)){
                     maxwellProps.put(key,props.get(key));
                     log.debug("Setting Maxwell Prop: " + key + " => " + maxwellProps.get(key));
+                }
+                if (key == "topic_prefix") {
+                    this.topic_prefix = props.get(key);
                 }
             }
             this.config = new MaxwellConfig(maxwellProps);
@@ -181,6 +185,9 @@ public class MySqlSourceTask extends SourceTask {
             String tableName = event.getTable();
 
             String topicName = databaseName + "." + tableName;
+            if ( this.topic_prefix != null && !this.topic_prefix.isEmpty() ) {
+                topicName = this.topic_prefix + "." + databaseName + "." + tableName;
+            }
 
 
             Table table = replicator.getSchema().findDatabase(databaseName).findTable(tableName);

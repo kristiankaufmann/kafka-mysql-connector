@@ -47,6 +47,8 @@ public class MySqlSourceConnector extends SourceConnector {
     public static final String MAXWELL_SCHEMA_DATABASE = "schema_database";
     public static final String WHITELIST_DATABASES = "include_dbs";
     public static final String WHITELIST_TABLES = "include_tables";
+    public static final String TOPIC_PREFIX = "topic_prefix";
+
     private String host;
     private String user;
     private String password;
@@ -58,6 +60,7 @@ public class MySqlSourceConnector extends SourceConnector {
     private String maxwell_schema_database;
     private String whitelist_dbs;
     private String whitelist_tables;
+    private String topic_prefix;
     
 
     @Override
@@ -73,6 +76,7 @@ public class MySqlSourceConnector extends SourceConnector {
         maxwell_schema_database = props.get(MAXWELL_SCHEMA_DATABASE);
         whitelist_dbs = props.get(WHITELIST_DATABASES);
         whitelist_tables = props.get(WHITELIST_TABLES);
+        topic_prefix = props.get(TOPIC_PREFIX);
         
         if (host == null || host.isEmpty()) {
             throw new ConnectException("MySqlSourceConnector configuration must include 'host' setting");
@@ -124,6 +128,14 @@ public class MySqlSourceConnector extends SourceConnector {
 
         if ( whitelist_tables != null ) {
             config.put("include_tables", whitelist_tables);
+        }
+
+        if ( topic_prefix != null ) {
+            if ( !topic_prefix.isEmpty() ) {
+                config.put("topic_prefix", topic_prefix);
+            }
+        } else {
+            config.put("topic_prefix", "maxwell");
         }
         configs.add(config);
         return configs;
