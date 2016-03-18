@@ -21,6 +21,8 @@ import org.apache.kafka.common.utils.AppInfoParser;
 import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.errors.ConnectException;
 import org.apache.kafka.connect.source.SourceConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,15 +34,30 @@ import java.util.Map;
  * sink modes via its 'mode' setting.
  */
 public class MySqlSourceConnector extends SourceConnector {
+    private static final Logger log = LoggerFactory.getLogger(MySqlSourceConnector.class);
+
     public static final String HOST_CONFIG = "host";
     public static final String USER_CONFIG = "user";
     public static final String PASSWORD_CONFIG = "password";
     public static final String PORT_CONFIG = "port";
-    
+    public static final String REPLICATION_HOST_CONFIG = "replication_host";
+    public static final String REPLICATION_USER_CONFIG = "replication_user";
+    public static final String REPLICATION_PASSWORD_CONFIG = "replication_password";
+    public static final String REPLICATION_PORT_CONFIG = "replication_port";
+    public static final String MAXWELL_SCHEMA_DATABASE = "schema_database";
+    public static final String WHITELIST_DATABASES = "include_dbs";
+    public static final String WHITELIST_TABLES = "include_tables";
     private String host;
     private String user;
     private String password;
     private String port;
+    private String replication_host;
+    private String replication_user;
+    private String replication_password;
+    private String replication_port;
+    private String maxwell_schema_database;
+    private String whitelist_dbs;
+    private String whitelist_tables;
     
 
     @Override
@@ -49,6 +66,13 @@ public class MySqlSourceConnector extends SourceConnector {
         user = props.get(USER_CONFIG);
         password = props.get(PASSWORD_CONFIG);
         port = props.get(PORT_CONFIG);
+        replication_host = props.get(REPLICATION_HOST_CONFIG);
+        replication_user = props.get(REPLICATION_USER_CONFIG);
+        replication_password = props.get(REPLICATION_PASSWORD_CONFIG);
+        replication_port = props.get(REPLICATION_PORT_CONFIG);
+        maxwell_schema_database = props.get(MAXWELL_SCHEMA_DATABASE);
+        whitelist_dbs = props.get(WHITELIST_DATABASES);
+        whitelist_tables = props.get(WHITELIST_TABLES);
         
         if (host == null || host.isEmpty()) {
             throw new ConnectException("MySqlSourceConnector configuration must include 'host' setting");
@@ -75,6 +99,32 @@ public class MySqlSourceConnector extends SourceConnector {
         config.put("password", password);
         config.put("host", host);
         config.put("port", port);
+        config.put("bootstrapper", "none");
+
+        if ( replication_host == null || replication_user == null || replication_password == null || replication_port == null ) {
+            config.put("replication_host", host);
+            config.put("replication_password", password);
+            config.put("replication_user", user);
+            config.put("replication_port", port);
+        } else {
+            config.put("replication_host", replication_host);
+            config.put("replication_password", replication_password);
+            config.put("replication_user", replication_user);
+            config.put("replication_port", replication_port);
+        }
+
+        if ( maxwell_schema_database == null || maxwell_schema_database.isEmpty() ) {
+            maxwell_schema_database = "maxwell";
+        }
+        config.put("schema_database", maxwell_schema_database);
+
+        if ( whitelist_dbs != null) {
+            config.put("include_dbs", whitelist_dbs);
+        }
+
+        if ( whitelist_tables != null ) {
+            config.put("include_tables", whitelist_tables);
+        }
         configs.add(config);
         return configs;
     }
