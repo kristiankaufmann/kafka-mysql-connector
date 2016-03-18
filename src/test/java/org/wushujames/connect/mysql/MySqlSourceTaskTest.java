@@ -68,14 +68,14 @@ public class MySqlSourceTaskTest {
     public void testChar() throws InterruptedException, IOException, SQLException {
         String insertSql = "insert into test.users (name) values (\"James\");";
         
-        testSchemaType("name", "char(128)", Schema.STRING_SCHEMA, "James", insertSql);
+        testSchemaType("name", "char(128)", Schema.OPTIONAL_STRING_SCHEMA, "James", insertSql);
     }
 
     @Test
     public void testTinyInt() throws InterruptedException, IOException, SQLException {
         String insertSql = "insert into test.users (tinyintcol) values (1);";
         
-        testSchemaType("tinyintcol", "tinyint", Schema.INT16_SCHEMA, (short) 1, insertSql);
+        testSchemaType("tinyintcol", "tinyint", Schema.OPTIONAL_INT16_SCHEMA, (short) 1, insertSql);
         // add tests for signed, unsigned
         // boundary tests -127 to 128, 0 to 255
         // http://dev.mysql.com/doc/refman/5.7/en/integer-types.html
@@ -88,7 +88,7 @@ public class MySqlSourceTaskTest {
         // http://dev.mysql.com/doc/refman/5.7/en/integer-types.html
         String insertSql = "insert into test.users (bigintcol) values (1844674407370955160);";
         
-        testSchemaType("bigintcol", "bigint", Schema.INT64_SCHEMA, 1844674407370955160L, insertSql);
+        testSchemaType("bigintcol", "bigint", Schema.OPTIONAL_INT64_SCHEMA, 1844674407370955160L, insertSql);
     }
 
     private void testSchemaType(String sqlFieldName, String sqlFieldType, Schema expectedValueSchema,
@@ -114,27 +114,27 @@ public class MySqlSourceTaskTest {
         Schema keySchema = james.keySchema();
         assertEquals(1, keySchema.fields().size());
         assertNotNull(keySchema.field("userid"));
-        assertEquals(Schema.INT32_SCHEMA, keySchema.field("userid").schema());
+        assertEquals(Schema.OPTIONAL_INT64_SCHEMA, keySchema.field("userid").schema());
         
         // check key
         Object keyObject = james.key();
         assertTrue(keyObject instanceof Struct);
         Struct key = (Struct) keyObject;
-        assertEquals(1, key.get("userid"));
+        assertEquals(1L, key.get("userid"));
         
         // check value schema
         Schema valueSchema = james.valueSchema();
-        assertEquals(2, valueSchema.fields().size());
-        assertNotNull(valueSchema.field("userid"));
-        assertEquals(Schema.INT32_SCHEMA, valueSchema.field("userid").schema());
-        assertNotNull(valueSchema.field(sqlFieldName));
-        assertEquals(expectedValueSchema, valueSchema.field(sqlFieldName).schema());
+        assertEquals(7, valueSchema.fields().size());
+        assertNotNull(valueSchema.field("data").schema().field("userid"));
+        assertEquals(Schema.OPTIONAL_INT64_SCHEMA, valueSchema.field("data").schema().field("userid").schema());
+        assertNotNull(valueSchema.field("data").schema().field(sqlFieldName));
+        assertEquals(expectedValueSchema, valueSchema.field("data").schema().field(sqlFieldName).schema());
         
         // check value
         Object valueObject = james.value();
         assertTrue(valueObject instanceof Struct);
-        Struct value = (Struct) valueObject;
-        assertEquals(1, value.get("userid"));
+        Struct value = (Struct) ((Struct) valueObject).get("data");
+        assertEquals(1L, value.get("userid"));
         assertEquals(expectedValue, value.get(sqlFieldName));
     }
 
