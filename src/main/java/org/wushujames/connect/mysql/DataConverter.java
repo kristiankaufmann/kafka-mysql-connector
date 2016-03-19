@@ -91,7 +91,7 @@ public class DataConverter {
                 builder.field(columnName, Schema.OPTIONAL_FLOAT32_SCHEMA);
                 break;
             case "decimal":
-                builder.field(columnName, Schema.OPTIONAL_FLOAT64_SCHEMA);
+                builder.field(columnName, Schema.OPTIONAL_BYTES_SCHEMA);
                 break;
             case "geometry":
             case "geometrycollection":
@@ -181,7 +181,7 @@ public class DataConverter {
                 struct.put(columnName, columnValue);
                 break;
             case "decimal":
-                struct.put(columnName, columnValue);
+                struct.put(columnName, (byte []) columnValue);
                 break;
             case "geometry":
             case "geometrycollection":
