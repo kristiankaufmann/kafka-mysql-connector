@@ -59,7 +59,9 @@ public class MySqlSourceTask extends SourceTask {
                 "password",
                 "replication_password",
                 "bootstrapper",
-                "schema_database"));
+                "schema_database",
+                "include_dbs",
+                "include_tables"));
 
     private com.zendesk.maxwell.schema.Schema schema;
     private MaxwellConfig config;
