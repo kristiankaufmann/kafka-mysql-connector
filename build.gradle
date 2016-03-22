@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     compile "org.apache.kafka:connect-api:0.9.0.1-cp1" // kafka connect version from confluentinc
-    compile "com.zendesk:maxwell:1.0.0-kafka-connect" //available from github.com/kristian/maxwell
+    compile "com.zendesk:maxwell:1.0.0-kafka-connect" //available from github.com/kristiankaufmann/maxwell
     compile "org.slf4j:slf4j-api:1.7.6"
     
     testCompile "junit:junit:4.11"
