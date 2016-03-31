@@ -112,7 +112,7 @@ public class MySqlSourceTask extends SourceTask {
                 if ( startAt != null) {
                     log.info("Maxwell is booting, starting at " + startAt);
                     this.maxwellContext.getConfig().initPosition = startAt;
-                    SchemaStore store = SchemaStore.restore(connection, this.maxwellContext);
+                    SchemaStore store = SchemaStore.restore(schemaConnection, this.maxwellContext);//error happens here
                     this.schema = store.getSchema();
                 } else {
                     log.info("no copycat offsets!");
