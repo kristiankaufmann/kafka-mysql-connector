@@ -92,6 +92,9 @@ public class MySqlSourceTask extends SourceTask {
                 System.out.println("have copycat offsets! " + offsetFromCopycat);
                 startAt = new BinlogPosition((long) offsetFromCopycat.get(POSITION_FIELD),
                         (String) offsetFromCopycat.get(FILENAME_FIELD));
+                if ( startAt != null) {
+                    this.config.initPosition = startAt;
+                }
             }
 
             if ( this.config.log_level != null )
@@ -111,8 +114,7 @@ public class MySqlSourceTask extends SourceTask {
 
                 if ( startAt != null) {
                     log.info("Maxwell is booting, starting at " + startAt);
-                    this.maxwellContext.getConfig().initPosition = startAt;
-                    SchemaStore store = SchemaStore.restore(schemaConnection, this.maxwellContext);//error happens here
+                    SchemaStore store = SchemaStore.restore(schemaConnection, this.maxwellContext);
                     this.schema = store.getSchema();
                 } else {
                     log.info("no copycat offsets!");
