@@ -1,4 +1,4 @@
-Kafka MySQL Connector
+Kafka MySQL Connector - forked from github.com/wushujames/kafka-mysql-connector
 
 kafka-mysql-connector is a plugin that allows you to easily replicate MySQL changes to Apache Kafka. It uses the fantastic [Maxwell](https://github.com/zendesk/maxwell) project to read MySQL binary logs in near-real time. It runs as a plugin within the [Kafka Connect](http://kafka.apache.org/090/documentation.html#connect) framework, which provides a standard way to ingest data into Kafka.
 
@@ -18,35 +18,34 @@ This code is a work-in-progress.
 
 What's done:
 * Offsets stored in Kafka by the Kafka Connect framework
-* Data format is a string... which contains JSON. Which is stored within a JSON structure by Kafka Connect. Which means tons of escaped quotes.
+* Simple schema extraction for row changes. This allows one to supply Converters such as confluents avro converter to control serialization of the messages.
 * Each table is written to its own topic. The Kafka primary key is the row's primary key.
 * It supports primary keys which are ints.
 
 What needs to be done:
 * Support primary keys of any SQL type
-* Add schema support for the rows, so that it isn't a JSON string
 * Testing.
 * Packaging
 * Logging
 
 Instructions for building and running
 -------------------------------------
-For now, it uses a [forked](https://github.com/wushujames/maxwell/tree/wushujames/libraryize) version of Maxwell. I have spoken to Ben Osheroff, the author of Maxwell, and I will be contributing my changes back to the Maxwell project.
+For now, it uses a [forked](https://github.com/kristiankaufmann/maxwell/tree/1.0.0-kafka-connect) version of Maxwell. Eventually Maxwell will provide an api exposing the needed functions however until then the branch will have to serve.
 
-1.  Pull down my Maxwell fork.
+1.  Pull down the Maxwell fork.
     ```
-    $ git clone https://github.com/wushujames/maxwell.git maxwell
+    $ git clone https://github.com/kristiankaufmann/maxwell.git maxwell
     ```
 
 2.  Build my Maxwell fork (which is in a branch called wushujames/libraryize) and place jars in local maven repo
     ```
-    $ (cd maxwell && git checkout wushujames/libraryize && mvn install)
+    $ (cd maxwell && git checkout 1.0.0-kafka-connect && mvn install)
     ```
 
 3.  Pull this repo down and build it and "install" it within the build directory.
     ```
-    $ git clone https://github.com/wushujames/kafka-mysql-connector kafka-mysql-connector
-    $ (cd kafka-mysql-connector && ./gradlew build installDist)
+    $ git clone https://github.com/kristiankaufmann/kafka-mysql-connector kafka-mysql-connector
+    $ (cd kafka-mysql-connector && ./gradlew build installDist -x test)
     ```
 
 4.  Run zookeeper somehow.
