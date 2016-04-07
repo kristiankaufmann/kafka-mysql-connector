@@ -159,7 +159,6 @@ public class MySqlSourceTask extends SourceTask {
     public List<SourceRecord> poll() throws InterruptedException {
         ArrayList<SourceRecord> records = new ArrayList<SourceRecord>();
         boolean checkpoint = false;
-        Long transaction_id = null;
         while(!checkpoint) {
             RowMap event;
             try {
@@ -221,7 +220,6 @@ public class MySqlSourceTask extends SourceTask {
             if ( records.size() > 10000 ) {
                     break;
             }
-            transaction_id = event.getXid();
 
         }
         return records;
